@@ -1,0 +1,28 @@
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Dados brutos e intermediários de grande volume
+data/raw/*
+data/interim/*
+
+# Preservar amostras pequenas versionadas
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/samples/
+!data/samples/**
+
+# Saídas geradas
+reports/figures/*
+!reports/figures/.gitkeep
+
