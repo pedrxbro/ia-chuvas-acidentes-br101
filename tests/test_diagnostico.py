@@ -108,6 +108,9 @@ def test_gera_amostras_e_relatorio_a_partir_dos_zips(tmp_path):
     amostra_b = pd.read_csv(pasta_amostras / "Grupo_XX_Fonte_B.csv")
     relatorio = caminho_relatorio.read_text(encoding="utf-8")
     assert amostra_a["id"].tolist() == [1]
+    assert {"data_hora_acidente_sp", "data_hora_acidente_utc"}.issubset(
+        amostra_a.columns
+    )
     assert set(amostra_b["status_precipitacao"]) == {
         "ausente",
         "invalida",
@@ -115,10 +118,20 @@ def test_gera_amostras_e_relatorio_a_partir_dos_zips(tmp_path):
         "zero",
     }
     assert len(amostra_b) == 8
-    assert "Licença de uso: **pendente de validação**" in relatorio
     assert "associação espacial" in relatorio
     assert "Grupo_XX_Fonte_A.csv" in relatorio
     assert "cobertura de 0,02%" in relatorio
+    assert "America/Sao_Paulo" in relatorio
+    assert (
+        "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/"
+        "dados-abertos-da-prf" in relatorio
+    )
+    assert "https://portal.inmet.gov.br/dadoshistoricos/" in relatorio
+    assert (
+        "https://portal.inmet.gov.br/noticias/saiba-como-acessar-os-dados-"
+        "meteorol%C3%B3gicos-dispon%C3%ADveis-no-site-do-inmet" in relatorio
+    )
+    assert "data original de download do ZIP local não foi registrada" in relatorio
 
 
 def test_cli_executa_modulo_sem_aviso_de_importacao(tmp_path):

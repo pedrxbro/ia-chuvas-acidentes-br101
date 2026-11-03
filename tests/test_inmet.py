@@ -81,9 +81,47 @@ def test_le_metadados_timestamp_e_precipitacao_preservando_originais(tmp_path):
 
 
 def test_classifica_zero_ausente_positivo_e_invalido():
-    resultado = classificar_precipitacao(pd.Series(["", "0", "0,0", "2,4", "x"]))
+    resultado = classificar_precipitacao(
+        pd.Series(["", "Null", "NULL", "9999", "0", "0,0", "2,4", "x"])
+    )
 
-    assert resultado.tolist() == ["ausente", "zero", "zero", "positiva", "invalida"]
+    assert resultado.tolist() == [
+        "ausente",
+        "ausente",
+        "ausente",
+        "ausente",
+        "zero",
+        "zero",
+        "positiva",
+        "invalida",
+    ]
+
+
+def test_le_sentinelas_inmet_como_ausentes_sem_alterar_zero(tmp_path):
+    caminho = tmp_path / "sentinelas.zip"
+    conteudo = conteudo_estacao().decode("cp1252").replace(
+        "2025/01/01;0200 UTC;1,2;",
+        "2025/01/01;0200 UTC;9999;\r\n"
+        "2025/01/01;0250 UTC;Null;\r\n"
+        "2025/01/01;0255 UTC;1,2;",
+    )
+    with ZipFile(caminho, "w", ZIP_DEFLATED) as arquivo:
+        arquivo.writestr(
+            "INMET_S_SC_A806_FLORIANOPOLIS_01-01-2025_A_31-12-2025.CSV",
+            conteudo.encode("cp1252"),
+        )
+
+    membro = listar_membros_sc(caminho)[0]
+    dados = ler_estacao_inmet(caminho, membro).dados
+
+    assert dados["precipitacao_mm"].tolist()[:5] == [0.0, None, None, None, 1.2]
+    assert dados["status_precipitacao"].tolist()[:5] == [
+        "zero",
+        "ausente",
+        "ausente",
+        "ausente",
+        "positiva",
+    ]
 
 
 def test_le_todas_as_estacoes_sc_sem_incluir_outros_estados(tmp_path):

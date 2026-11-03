@@ -74,6 +74,14 @@ def ler_prf(caminho_zip: str | Path) -> pd.DataFrame:
         format="%Y-%m-%d %H:%M:%S",
         errors="coerce",
     )
+    dados["data_hora_acidente_sp"] = dados["data_hora_acidente"].dt.tz_localize(
+        "America/Sao_Paulo",
+        ambiguous="NaT",
+        nonexistent="NaT",
+    )
+    dados["data_hora_acidente_utc"] = dados[
+        "data_hora_acidente_sp"
+    ].dt.tz_convert("UTC")
     dados["br_num"] = _numero_decimal(dados["br"]).astype("Int64")
     dados["km_num"] = _numero_decimal(dados["km"])
     dados["latitude_num"] = _numero_decimal(dados["latitude"])

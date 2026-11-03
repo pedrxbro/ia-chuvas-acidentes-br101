@@ -43,6 +43,17 @@ def _decimal(valor: str) -> float:
     return float(valor.strip().replace(",", "."))
 
 
+def _normalizar_precipitacao(valores: pd.Series) -> tuple[pd.Series, pd.Series]:
+    """Retorna o texto limpo e o valor numérico, mascarando sentinelas INMET."""
+
+    textos = valores.astype("string").fillna("").str.strip()
+    ausentes = textos.str.upper().isin({"", "NULL", "9999"})
+    numeros = pd.to_numeric(
+        textos.str.replace(",", ".", regex=False), errors="coerce"
+    ).mask(ausentes)
+    return textos, numeros
+
+
 def listar_membros_sc(caminho_zip: str | Path) -> list[str]:
     """Lista os CSVs catarinenses sem descompactar o arquivo."""
 
@@ -59,11 +70,11 @@ def listar_membros_sc(caminho_zip: str | Path) -> list[str]:
 def classificar_precipitacao(valores: pd.Series) -> pd.Series:
     """Classifica a disponibilidade sem confundir zero com ausência."""
 
-    textos = valores.astype("string").fillna("").str.strip()
-    numeros = pd.to_numeric(textos.str.replace(",", ".", regex=False), errors="coerce")
+    textos, numeros = _normalizar_precipitacao(valores)
+    ausentes = textos.str.upper().isin({"", "NULL", "9999"})
     resultado = pd.Series("invalida", index=valores.index, dtype="object")
-    resultado.loc[textos.eq("")] = "ausente"
-    resultado.loc[numeros.eq(0) & textos.ne("")] = "zero"
+    resultado.loc[ausentes] = "ausente"
+    resultado.loc[numeros.eq(0) & ~ausentes] = "zero"
     resultado.loc[numeros.gt(0)] = "positiva"
     return resultado
 
@@ -120,8 +131,7 @@ def ler_estacao_inmet(caminho_zip: str | Path, membro: str) -> LeituraEstacao:
     if coluna_precipitacao is None:
         raise ValueError(f"Coluna de precipitação horária não encontrada em {membro}")
 
-    textos = dados[coluna_precipitacao].astype("string").fillna("").str.strip()
-    numeros = pd.to_numeric(textos.str.replace(",", ".", regex=False), errors="coerce")
+    _, numeros = _normalizar_precipitacao(dados[coluna_precipitacao])
     dados["precipitacao_mm"] = pd.Series(
         [float(numero) if pd.notna(numero) else None for numero in numeros],
         index=dados.index,

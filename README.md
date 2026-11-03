@@ -47,5 +47,5 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Esta etapa contém somente a estrutura inicial; o processamento dos datasets, a integração, a análise exploratória e os gráficos serão desenvolvidos posteriormente.
+Esta etapa contém leitores reutilizáveis, diagnóstico de qualidade, amostras e testes para a M2.1. A associação espacial definitiva, a análise exploratória e os gráficos pertencem às etapas posteriores.
 

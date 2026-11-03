@@ -225,7 +225,12 @@ def _renderizar_relatorio(
         ["Campo original", "Uso no diagnóstico", "Campo padronizado"],
         [
             ["id", "Identificador e duplicidade", "—"],
-            ["data_inversa + horario", "Data e hora da ocorrência", "data_acidente; data_hora_acidente"],
+            [
+                "data_inversa + horario",
+                "Data e hora da ocorrência",
+                "data_acidente; data_hora_acidente; data_hora_acidente_sp; "
+                "data_hora_acidente_utc",
+            ],
             ["uf + br", "Filtro SC/BR-101", "br_num"],
             ["municipio", "Localidade declarada", "—"],
             ["km", "Posição quilométrica", "km_num"],
@@ -304,8 +309,10 @@ Este documento registra a leitura e o diagnóstico calculado dos arquivos fornec
 - Codificação detectada: `{formato_prf.codificacao}`.
 - Cabeçalho: primeira linha do CSV.
 - Data: `AAAA-MM-DD`; horário: `HH:MM:SS`; decimais: vírgula.
-- Licença de uso: **pendente de validação**.
-- Data de acesso: **pendente de registro**.
+- Fuso adotado para o horário PRF: `America/Sao_Paulo`; a coluna UTC é derivada sem substituir o valor original.
+- Página oficial: https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf
+- Condições informadas na página oficial: dados abertos, disponíveis para livre utilização, reutilização e redistribuição; nenhuma licença nominal específica foi identificada nesta verificação.
+- Página oficial verificada em 2026-11-03; a data original de download do ZIP local não foi registrada.
 
 ### Quantidade e qualidade
 
@@ -335,8 +342,10 @@ Os campos originais são preservados como texto. Sufixos `_num` e os campos temp
 - Separador detectado: {separadores_inmet}; codificação detectada: {codificacoes_inmet}.
 - Metadados lidos das oito linhas iniciais: código WMO, nome, latitude e longitude (além dos valores originais de região, UF, altitude e data de fundação quando presentes).
 - Data: `AAAA/MM/DD`; hora: `HHMM UTC`; precipitação: milímetros com vírgula decimal.
-- Licença de uso: **pendente de validação**.
-- Data de acesso: **pendente de registro**.
+- Página oficial: https://portal.inmet.gov.br/dadoshistoricos/
+- Orientação oficial sobre acesso, horários e qualidade: https://portal.inmet.gov.br/noticias/saiba-como-acessar-os-dados-meteorol%C3%B3gicos-dispon%C3%ADveis-no-site-do-inmet
+- Condições informadas pelo INMET: dados públicos e gratuitos; o usuário é responsável pelo uso e pela aplicação. Os dados de estações automáticas são brutos e não passam por validação de consistência antes da disponibilização.
+- Página oficial verificada em 2026-11-03; a data original de download do ZIP local não foi registrada.
 
 ### Quantidade, localização e cobertura
 
@@ -349,7 +358,7 @@ Os campos originais são preservados como texto. Sufixos `_num` e os campos temp
 - Timestamps duplicados dentro da mesma estação: **{_inteiro(resumo_inmet['timestamps_duplicados'])}**.
 - Extensão espacial das estações: latitude {resumo_inmet['latitude_min']} a {resumo_inmet['latitude_max']}; longitude {resumo_inmet['longitude_min']} a {resumo_inmet['longitude_max']}.
 
-Uma linha horária com precipitação vazia é **medição ausente**, não ausência de chuva. O valor numérico `0` é preservado como **medição válida sem precipitação**. A cobertura abaixo usa medições válidas divididas pelas 8.760 horas de 2025.
+Uma linha horária com precipitação vazia, `Null` ou `9999` é **medição ausente**, não ausência de chuva. O valor numérico `0` é preservado como **medição válida sem precipitação**. A cobertura abaixo usa medições válidas divididas pelas 8.760 horas de 2025.
 
 {tabela_cobertura}
 
@@ -366,12 +375,12 @@ Uma linha horária com precipitação vazia é **medição ausente**, não ausê
 
 ## Limitações e pendências
 
-- Validar e registrar a licença/termos de uso de cada instituição e a data de acesso dos arquivos; essas informações não constam nos dados fornecidos.
-- O fuso de `horario` da PRF não está marcado no CSV. O INMET declara UTC; uma regra explícita de conversão temporal será necessária antes da integração.
+- A data original de download dos ZIPs não foi registrada. A data de 2026-11-03 documenta somente a verificação das páginas oficiais.
+- O fuso de `horario` da PRF não está marcado no CSV. Por decisão metodológica do projeto, ele é tratado como `America/Sao_Paulo` e convertido também para UTC; essa suposição deve permanecer documentada na integração.
 - Ausência de medição INMET não pode ser interpretada como precipitação zero. Lacunas extensas podem impedir o uso de uma estação em etapas posteriores.
 - A causa operacional das lacunas de cada estação não está presente nos arquivos e não foi inferida.
 - Coordenadas e km são declarações das fontes; este diagnóstico valida conversão e disponibilidade, não precisão geográfica.
-- Os resultados descrevem a versão local dos ZIPs disponibilizados. Data de publicação, revisão do arquivo e URL de origem permanecem pendentes de documentação.
+- Os resultados descrevem a versão local dos ZIPs disponibilizados. A revisão exata dos arquivos e a data original de download permanecem pendentes de documentação.
 - Nenhuma associação espacial entre acidentes e estações foi feita nesta etapa e nenhuma conclusão sobre correlação foi produzida.
 
 Relatório gerado de forma reproduzível em {date.today().isoformat()} a partir dos arquivos locais. Essa data é a data de processamento, não uma data de acesso às fontes.
@@ -403,6 +412,8 @@ def gerar_artefatos(
     colunas_prf = [
         *CAMPOS_RELEVANTES,
         "data_hora_acidente",
+        "data_hora_acidente_sp",
+        "data_hora_acidente_utc",
         "br_num",
         "km_num",
         "latitude_num",
