@@ -1,6 +1,6 @@
 # Conteúdo-base da proposta M2.1
 
-Este texto foi preparado para transposição às seções 1 a 3 do `Template_Projeto_IA.docx`. Antes da entrega, preencher o código do grupo, os nomes de todos os integrantes e a data original de download dos arquivos. O documento final deve respeitar o limite de duas páginas de conteúdo preenchido, além das amostras.
+Este texto serviu de apoio ao preenchimento das seções 1 a 3 de `docs/Grupo_R_Projeto_IA.docx`. O código do grupo e os integrantes já foram informados; antes da entrega, falta confirmar a turma e, se recuperável, a data original de download dos arquivos. O documento final respeita o limite de duas páginas de conteúdo da M2.1, além das amostras.
 
 ## 1. Problema e escopo
 
@@ -17,7 +17,7 @@ Uma linha da PRF representa uma ocorrência de acidente. Uma linha do INMET repr
 | PRF — `datatran2025.csv` em `datatran2025.zip` | Polícia Rodoviária Federal. https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf | 2025; uma ocorrência de acidente por linha. | Fornece data, horário, localização, classificação, mortos, feridos e condição meteorológica declarada. A página oficial informa livre utilização, reutilização e redistribuição; nenhuma licença nominal específica foi identificada. |
 | INMET — 24 arquivos `_SC_` em `2025.zip` | Instituto Nacional de Meteorologia. Dados históricos: https://portal.inmet.gov.br/dadoshistoricos/. Orientação oficial: https://portal.inmet.gov.br/noticias/saiba-como-acessar-os-dados-meteorol%C3%B3gicos-dispon%C3%ADveis-no-site-do-inmet | 2025; uma observação meteorológica horária por linha. | Fornece código WMO, nome e coordenadas da estação e precipitação total horária em milímetros. O INMET informa acesso público e gratuito e atribui ao usuário a responsabilidade pelo uso; os dados automáticos são brutos e não validados previamente quanto à consistência. |
 
-As páginas oficiais foram verificadas em 03/11/2026. Essa é a data de verificação documental, não a data original de download dos ZIPs, que não foi registrada e permanece pendente. As amostras reais estão em `data/samples/Grupo_XX_Fonte_A.csv` e `data/samples/Grupo_XX_Fonte_B.csv`, com oito registros e cabeçalhos em cada arquivo.
+As páginas oficiais foram verificadas em 03/11/2026. Essa é a data de verificação documental, não a data original de download dos ZIPs, que não foi registrada e permanece pendente. As amostras reais estão em `data/samples/Grupo_R_Fonte_A.csv` e `data/samples/Grupo_R_Fonte_B.csv`, com oito registros e cabeçalhos em cada arquivo.
 
 A PRF usa ponto e vírgula, codificação CP1252, data `AAAA-MM-DD`, horário `HH:MM:SS` e vírgula decimal. O horário é tratado por decisão metodológica como `America/Sao_Paulo`, mantendo o valor original e uma versão convertida para UTC. O INMET usa ponto e vírgula, CP1252, data `AAAA/MM/DD`, hora `HHMM UTC` e vírgula decimal. Precipitação `0` é uma medição válida sem chuva; vazio, `Null` e `9999` são ausência de medição.
 
@@ -33,7 +33,5 @@ Foi utilizada assistência de IA para apoiar a inspeção dos arquivos, a implem
 
 ## Pendências antes da entrega
 
-- Informar o código do grupo e os nomes de todos os integrantes.
-- Disponibilizar o `Template_Projeto_IA.docx` para preenchimento das seções 1 a 3.
+- Confirmar a turma dos integrantes.
 - Registrar a data original de download dos dois ZIPs, se recuperável.
-- Substituir `XX` nos nomes dos arquivos pela identificação real do grupo.

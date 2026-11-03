@@ -216,6 +216,7 @@ def _renderizar_relatorio(
     cobertura: pd.DataFrame,
     formato_prf,
     estacoes: list[LeituraEstacao],
+    codigo_grupo: str,
 ) -> str:
     nulos = _tabela_markdown(
         ["Campo", "Nulos/NA no recorte"],
@@ -368,10 +369,8 @@ Uma linha horária com precipitação vazia, `Null` ou `9999` é **medição aus
 
 ## Amostras preparadas
 
-- `data/samples/Grupo_XX_Fonte_A.csv`: até 8 ocorrências reais do recorte SC/BR-101, com campos originais relevantes e derivados padronizados.
-- `data/samples/Grupo_XX_Fonte_B.csv`: até 8 observações reais, escolhidas deterministicamente por estação e estado da precipitação para representar zero, valor positivo e lacunas quando disponíveis.
-
-`XX` permanece como marcador porque o número do grupo não foi informado.
+- `data/samples/Grupo_{codigo_grupo}_Fonte_A.csv`: até 8 ocorrências reais do recorte SC/BR-101, com campos originais relevantes e derivados padronizados.
+- `data/samples/Grupo_{codigo_grupo}_Fonte_B.csv`: até 8 observações reais, escolhidas deterministicamente por estação e estado da precipitação para representar zero, valor positivo e lacunas quando disponíveis.
 
 ## Limitações e pendências
 
@@ -393,6 +392,7 @@ def gerar_artefatos(
     pasta_amostras: str | Path,
     caminho_relatorio: str | Path,
     tamanho_amostra: int = 8,
+    codigo_grupo: str = "R",
 ) -> ResultadoDiagnostico:
     """Lê as fontes, calcula indicadores e grava amostras e relatório."""
 
@@ -422,11 +422,11 @@ def gerar_artefatos(
         "feridos_num",
     ]
     amostra_prf = recorte_prf.sort_values(["data_hora_acidente", "id"]).head(tamanho_amostra)
-    caminho_amostra_prf = pasta_amostras / "Grupo_XX_Fonte_A.csv"
+    caminho_amostra_prf = pasta_amostras / f"Grupo_{codigo_grupo}_Fonte_A.csv"
     amostra_prf.loc[:, colunas_prf].to_csv(caminho_amostra_prf, index=False, encoding="utf-8")
 
     amostra_inmet = _amostrar_inmet(estacoes, tamanho_amostra)
-    caminho_amostra_inmet = pasta_amostras / "Grupo_XX_Fonte_B.csv"
+    caminho_amostra_inmet = pasta_amostras / f"Grupo_{codigo_grupo}_Fonte_B.csv"
     amostra_inmet.to_csv(caminho_amostra_inmet, index=False, encoding="utf-8")
 
     with ZipFile(caminho_prf) as arquivo:
@@ -440,6 +440,7 @@ def gerar_artefatos(
         cobertura,
         formato_prf,
         estacoes,
+        codigo_grupo,
     )
     caminho_relatorio.write_text(relatorio, encoding="utf-8")
     return ResultadoDiagnostico(
@@ -458,8 +459,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--inmet", type=Path, default=Path("data/raw/2025.zip"))
     parser.add_argument("--amostras", type=Path, default=Path("data/samples"))
     parser.add_argument("--relatorio", type=Path, default=Path("docs/diagnostico_fontes.md"))
+    parser.add_argument("--grupo", default="R", help="Código usado nos nomes das amostras")
     args = parser.parse_args(argv)
-    resultado = gerar_artefatos(args.prf, args.inmet, args.amostras, args.relatorio)
+    resultado = gerar_artefatos(
+        args.prf,
+        args.inmet,
+        args.amostras,
+        args.relatorio,
+        codigo_grupo=args.grupo,
+    )
     print(
         f"PRF SC/BR-101: {resultado.prf['registros_sc_br101']}; "
         f"estações INMET: {resultado.inmet['quantidade_estacoes']}"

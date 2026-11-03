@@ -121,10 +121,8 @@ Uma linha horária com precipitação vazia, `Null` ou `9999` é **medição aus
 
 ## Amostras preparadas
 
-- `data/samples/Grupo_XX_Fonte_A.csv`: até 8 ocorrências reais do recorte SC/BR-101, com campos originais relevantes e derivados padronizados.
-- `data/samples/Grupo_XX_Fonte_B.csv`: até 8 observações reais, escolhidas deterministicamente por estação e estado da precipitação para representar zero, valor positivo e lacunas quando disponíveis.
-
-`XX` permanece como marcador porque o número do grupo não foi informado.
+- `data/samples/Grupo_R_Fonte_A.csv`: até 8 ocorrências reais do recorte SC/BR-101, com campos originais relevantes e derivados padronizados.
+- `data/samples/Grupo_R_Fonte_B.csv`: até 8 observações reais, escolhidas deterministicamente por estação e estado da precipitação para representar zero, valor positivo e lacunas quando disponíveis.
 
 ## Limitações e pendências
 

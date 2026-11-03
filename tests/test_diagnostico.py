@@ -102,10 +102,11 @@ def test_gera_amostras_e_relatorio_a_partir_dos_zips(tmp_path):
         pasta_amostras,
         caminho_relatorio,
         tamanho_amostra=8,
+        codigo_grupo="R",
     )
 
-    amostra_a = pd.read_csv(pasta_amostras / "Grupo_XX_Fonte_A.csv")
-    amostra_b = pd.read_csv(pasta_amostras / "Grupo_XX_Fonte_B.csv")
+    amostra_a = pd.read_csv(pasta_amostras / "Grupo_R_Fonte_A.csv")
+    amostra_b = pd.read_csv(pasta_amostras / "Grupo_R_Fonte_B.csv")
     relatorio = caminho_relatorio.read_text(encoding="utf-8")
     assert amostra_a["id"].tolist() == [1]
     assert {"data_hora_acidente_sp", "data_hora_acidente_utc"}.issubset(
@@ -119,7 +120,7 @@ def test_gera_amostras_e_relatorio_a_partir_dos_zips(tmp_path):
     }
     assert len(amostra_b) == 8
     assert "associação espacial" in relatorio
-    assert "Grupo_XX_Fonte_A.csv" in relatorio
+    assert "Grupo_R_Fonte_A.csv" in relatorio
     assert "cobertura de 0,02%" in relatorio
     assert "America/Sao_Paulo" in relatorio
     assert (
