@@ -132,7 +132,7 @@ def test_gera_amostras_e_relatorio_a_partir_dos_zips(tmp_path):
         "https://portal.inmet.gov.br/noticias/saiba-como-acessar-os-dados-"
         "meteorol%C3%B3gicos-dispon%C3%ADveis-no-site-do-inmet" in relatorio
     )
-    assert "data original de download do ZIP local não foi registrada" in relatorio
+    assert "ZIPs locais: 31/10/2026" in relatorio
 
 
 def test_cli_executa_modulo_sem_aviso_de_importacao(tmp_path):

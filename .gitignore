@@ -25,4 +25,5 @@ data/interim/*
 # Saídas geradas
 reports/figures/*
 !reports/figures/.gitkeep
+!reports/figures/*.png
 

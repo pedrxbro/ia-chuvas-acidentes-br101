@@ -47,5 +47,16 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Esta etapa contém leitores reutilizáveis, diagnóstico de qualidade, amostras e testes para a M2.1. A associação espacial definitiva, a análise exploratória e os gráficos pertencem às etapas posteriores.
+## Executar a M2.2
+
+Com os dois ZIPs em `data/raw/`, execute:
+
+```bash
+python run_m22.py
+jupyter nbconvert --to notebook --execute --inplace notebooks/Grupo_R_M2_2_EDA.ipynb
+```
+
+O pipeline interpreta o horário PRF como `America/Sao_Paulo`, converte as horas UTC do INMET para a data local, agrega chuva com critério principal de 23 horas válidas, associa cada acidente à estação mais próxima em até 50 km e grava tabelas em `data/processed/`, figuras em `reports/figures/` e o resumo em `reports/resumo_m22.md`.
+
+As faixas de chuva e a alternativa com estações de cobertura anual maior ou igual a 90% são sensibilidades exploratórias. Não representam categorias oficiais de risco nem permitem inferência causal.
 
